@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Task.Domain.Commands;
 using Task.Domain.Handlers;
 using Task.Domain.Repositories.Contracts;
@@ -9,6 +11,7 @@ namespace Task.Api.Controllers
 {
     [ApiController]
     [Route("v1/tasks")]
+    [Authorize]
     public class TaskController : ControllerBase
     {
         [Route("")]
@@ -17,7 +20,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
 
             return repository.GetAll(user);
         }
@@ -28,7 +31,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetAllDone(user);
         }
 
@@ -38,7 +41,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetAllUndone(user);
         }
 
@@ -48,7 +51,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetByPeriod(
                 user,
                 DateTime.Now.Date,
@@ -62,7 +65,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetByPeriod(
                 user,
                 DateTime.Now.Date,
@@ -76,7 +79,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetByPeriod(
                 user,
                 DateTime.Now.Date.AddDays(1),
@@ -90,7 +93,7 @@ namespace Task.Api.Controllers
             [FromServices] ITaskRepository repository
         )
         {
-            var user = "david@email.com";
+            var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return repository.GetByPeriod(
                 user,
                 DateTime.Now.Date.AddDays(1),
@@ -105,7 +108,7 @@ namespace Task.Api.Controllers
             [FromServices] TaskHandler handler
         )
         {
-            command.User = "david@email.com";
+           command.User = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
 
             return (GenericCommandResult)handler.Handle(command);
         }
@@ -117,7 +120,7 @@ namespace Task.Api.Controllers
            [FromServices] TaskHandler handler
        )
         {
-            command.User = "david@email.com";
+           command.User = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return (GenericCommandResult)handler.Handle(command);
         }
 
@@ -128,7 +131,7 @@ namespace Task.Api.Controllers
             [FromServices] TaskHandler handler
         )
         {
-            command.User = "david@email.com";
+           command.User = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return (GenericCommandResult)handler.Handle(command);
         }
 
@@ -139,7 +142,7 @@ namespace Task.Api.Controllers
             [FromServices] TaskHandler handler
         )
         {
-            command.User = "david@email.com";
+           command.User = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
             return (GenericCommandResult)handler.Handle(command);
         }
     }

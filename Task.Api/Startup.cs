@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Task.Domain.Handlers;
 using Task.Domain.Repositories.Contracts;
@@ -34,6 +36,21 @@ namespace Task.Api
 
             services.AddTransient<ITaskRepository, TaskRepository>();
             services.AddTransient<TaskHandler, TaskHandler>();
+
+            services
+              .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.Authority = "https://securetoken.google.com/project-824032484696";
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidIssuer = "https://securetoken.google.com/project-824032484696",
+                      ValidateAudience = true,
+                      ValidAudience = "project-824032484696",
+                      ValidateLifetime = true
+                  };
+              });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +72,7 @@ namespace Task.Api
               .AllowAnyMethod()
               .AllowAnyHeader());
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
